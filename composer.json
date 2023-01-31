@@ -1,0 +1,30 @@
+{
+    "name": "ncla/statamic-focal-point-fieldtype",
+    "license": "MIT",
+    "type": "statamic-addon",
+    "description": "Standalone asset focal point fieldtype for Statamic",
+    "autoload": {
+        "psr-4": {
+            "Ncla\\FocalPoint\\": "src"
+        }
+    },
+    "extra": {
+        "statamic": {
+            "name": "Focal Point Filedtype",
+            "description": "Store focal point separately from an asset"
+        },
+        "laravel": {
+            "providers": [
+                "Ncla\\FocalPoint\\ServiceProvider"
+            ]
+        }
+    },
+    "require": {
+        "statamic/cms": "3.3.* || 3.4.*"
+    },
+    "config": {
+        "allow-plugins": {
+            "pixelfear/composer-dist-plugin": true
+        }
+    }
+}
