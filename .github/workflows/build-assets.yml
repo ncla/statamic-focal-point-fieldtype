@@ -7,6 +7,9 @@ on:
     paths:
       - 'resources/**'
 
+permissions:
+  contents: write
+
 jobs:
   build-dist:
     runs-on: ubuntu-latest
