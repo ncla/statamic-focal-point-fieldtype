@@ -29,7 +29,7 @@
 </template>
 
 <script>
-// TODO: Check if there is better way to import from core
+// TODO: Check if there is better way to import from core.
 import FocalPointEditor from "../../vendor/statamic/cms/resources/js/components/assets/Editor/FocalPointEditor";
 
 export default {
