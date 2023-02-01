@@ -16,7 +16,7 @@ composer require ncla/statamic-focal-point-fieldtype
 
 ## Fieldtype
 
-As any fieldtype, you can add it through control panel interface. You will find the fieldtype in the "Media" category. In field options, you wil just have to define "Assets Field Handle" and that is it.
+As any fieldtype, you can add it through control panel interface. You will find the fieldtype in the "Media" category. In field options, you will just have to define "Assets Field Handle" and that is it.
 
 Alternatively if you are feeling hacker vibes, you can of course add this fieldtype to your fields by editing blueprint file directly:
 ```yaml
