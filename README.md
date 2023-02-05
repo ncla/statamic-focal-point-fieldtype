@@ -1,5 +1,9 @@
 # Focal Point Fieldtype
 
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/ncla/statamic-focal-point-fieldtype)
+![Supported Statamic version](https://img.shields.io/badge/Statamic-3.3%2B-FF269E)
+[![justforfunnoreally.dev badge](https://img.shields.io/badge/justforfunnoreally-dev-9ff)](https://justforfunnoreally.dev)
+
 The Statamic control panel has very useful focal point selection tool, unfortunately you can only set one focal point only for one asset. Fortunately this addon provides a fieldtype that allows you to set focal point in a separate field for an asset that has been linked in an assets field.
 
 This addon can be useful in situations such as:
