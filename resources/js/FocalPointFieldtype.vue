@@ -9,31 +9,31 @@
     <element-container @resized="containerWidth = $event.width;">
       <div>
         <button
-            class="btn w-full flex flex-row items-center justify-center text-center gap-1"
-            type="button"
-            :disabled="isEditingDisabled"
-            @click="openFocalPointEditor"
+          class="btn w-full flex flex-row items-center justify-center text-center gap-1"
+          type="button"
+          :disabled="isEditingDisabled"
+          @click="openFocalPointEditor"
         >
           <svg-icon name="pin" class="pin-icon flex-shrink-0 w-4 h-4"/>
           <span
-              class="error overflow-hidden truncate"
-              :title="error"
-              v-if="error"
-              v-text="error"
+            class="error overflow-hidden truncate"
+            :title="error"
+            v-if="error"
+            v-text="error"
           ></span>
           <span
-              class="call-to-action"
-              v-else-if="!coordinates"
+            class="call-to-action"
+            v-else-if="!coordinates"
           >{{ __('Set Focal Point') }}</span>
           <span class="coordinates flex-row gap-1" v-else>
-          <span>{{ __('X') }}: {{ coordinates.x }}%</span>
-          <span>{{ __('Y') }}: {{ coordinates.y }}%</span>
-          <span>{{ __('Z') }}: {{ coordinates.z }}</span>
-        </span>
+            <span>{{ __('X') }}: {{ coordinates.x }}%</span>
+            <span>{{ __('Y') }}: {{ coordinates.y }}%</span>
+            <span>{{ __('Z') }}: {{ coordinates.z }}</span>
+          </span>
           <span
-              class="coordinates-simple"
-              v-if="coordinates"
-              v-text="coordinatesString"
+            class="coordinates-simple"
+            v-if="coordinates"
+            v-text="coordinatesString"
           ></span>
         </button>
       </div>
