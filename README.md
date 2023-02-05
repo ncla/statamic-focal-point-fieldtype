@@ -6,6 +6,10 @@ This addon can be useful in situations such as:
 - You want to change focal point between responsive breakpoints
 - Your site has the same asset appearing in multiple places and you do not want them all to share the same focal point
 
+<p align="center">
+    <img src="https://user-images.githubusercontent.com/5507083/216421793-3250d185-de63-49a2-a97f-27f875601a02.gif"/>
+</p>
+
 ## Installation
 
 Require it using Composer.
