@@ -120,7 +120,7 @@ export default {
     },
     assetImageUrl() {
       try {
-        return this.$store.state.publish[this.storeName].meta[this.targetAssetFieldHandle].data[0].url
+        return this.meta[this.targetAssetFieldHandle].data[0].url
       } catch (e) {
         return null;
       }
@@ -131,6 +131,19 @@ export default {
     showFocalPointEditor() {
       return this.showFocalPointEditor && this.error === false && this.assetImageUrl;
     },
+    meta() {
+      if (!this.namePrefix) {
+        return this.$store.state.publish[this.storeName].meta
+      }
+
+      let parent = this.$parent.$parent
+
+      while (parent.meta === undefined) {
+        parent = parent.$parent
+      }
+
+      return parent.meta
+    }
   },
   watch: {
     assetImageUrl() {
@@ -162,13 +175,11 @@ export default {
         return __('No asset field handle has been set in the field options');
       }
 
-      const meta = this.$store.state.publish[this.storeName].meta;
-
-      if (!meta.hasOwnProperty(this.targetAssetFieldHandle)) {
+      if (!this.meta.hasOwnProperty(this.targetAssetFieldHandle)) {
         return __('Linked asset field was not found');
       }
 
-      const fieldMeta = meta[this.targetAssetFieldHandle];
+      const fieldMeta = this.meta[this.targetAssetFieldHandle];
 
       if (!fieldMeta.hasOwnProperty('data')) {
         return __('No asset field meta data is available');
