@@ -10,7 +10,7 @@
     },
     "extra": {
         "statamic": {
-            "name": "Focal Point Filedtype",
+            "name": "Focal Point Fieldtype",
             "description": "Store focal point separately from an asset"
         },
         "laravel": {
