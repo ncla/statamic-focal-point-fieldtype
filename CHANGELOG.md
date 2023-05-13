@@ -2,6 +2,14 @@
 
 All notable changes to `statamic-focal-point-fieldtype` will be documented in this file
 
+## v3.0.0 - 2023-05-13
+
+### What's Changed
+
+- Focal point fieldtype will now look through all parent fieldtypes/components for matching asset fieldtype handle, allowing you to have, for example, a top level asset field, and focal point fieldtype somewhere nested like within a grid that is within a replicator.
+
+**Full Changelog**: https://github.com/ncla/statamic-focal-point-fieldtype/compare/v2.1.0...v3.0.0
+
 ## v2.1.0 - 2023-05-13
 
 ### What's Changed
