@@ -2,7 +2,7 @@
 
 <!-- statamic:hide -->
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/ncla/statamic-focal-point-fieldtype)](https://github.com/ncla/statamic-focal-point-fieldtype/releases)
-[![Supported Statamic version](https://img.shields.io/badge/Statamic-3.3%2B-FF269E)](https://github.com/statamic/cms/releases)
+[![Supported Statamic version](https://img.shields.io/badge/Statamic-4.0%2B-FF269E)](https://github.com/statamic/cms/releases)
 [![justforfunnoreally.dev badge](https://img.shields.io/badge/justforfunnoreally-dev-9ff)](https://justforfunnoreally.dev)
 <!-- /statamic:hide -->
 
