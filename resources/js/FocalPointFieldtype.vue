@@ -39,19 +39,21 @@
       </div>
     </element-container>
 
-    <portal to="outside">
-      <FocalPointEditor
-        v-if="showFocalPointEditor"
-        :data="coordinatesString"
-        :image="assetImageUrl"
-        @selected="selectFocalPoint"
-        @closed="closeFocalPointEditor"
-      ></FocalPointEditor>
-    </portal>
+    <FocalPointEditor
+      v-if="showFocalPointEditor"
+      :data="coordinatesString"
+      :image="assetImageUrl"
+      @selected="selectFocalPoint"
+      @closed="closeFocalPointEditor"
+    ></FocalPointEditor>
   </div>
 </template>
 
-<style type="text/css">
+<style type="text/css" scoped>
+.gap-1 {
+  gap: 0.25rem;
+}
+
 .coordinates-simple {
   display: none;
 }
