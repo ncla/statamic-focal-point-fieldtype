@@ -133,16 +133,37 @@ export default {
     },
     meta() {
       if (!this.namePrefix) {
+        // Keep it simple for top level fields
         return this.$store.state.publish[this.storeName].meta
       }
 
-      let parent = this.$parent.$parent
+      let parent = this.$parent
+      let stopLoop = false
+      let loopIterations = 0
+      const loopIterationLimit = 1000
+      let meta
 
-      while (parent.meta === undefined) {
+      while (stopLoop === false && loopIterations < loopIterationLimit) {
+        // Keep looking till we find parent with meta and with matching target handle
+        if (parent && parent.meta && parent.meta[this.targetAssetFieldHandle]) {
+          meta = parent.meta
+          break
+        }
+
+        // No parent components available anymore
+        if (parent.$parent === undefined) {
+          break
+        }
+
         parent = parent.$parent
+        loopIterations++
       }
 
-      return parent.meta
+      if (meta === undefined) {
+        return null
+      }
+
+      return meta
     }
   },
   watch: {
@@ -175,7 +196,7 @@ export default {
         return __('No asset field handle has been set in the field options');
       }
 
-      if (!this.meta.hasOwnProperty(this.targetAssetFieldHandle)) {
+      if (this.meta === null || !this.meta.hasOwnProperty(this.targetAssetFieldHandle)) {
         return __('Linked asset field was not found');
       }
 
