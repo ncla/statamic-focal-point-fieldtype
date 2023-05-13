@@ -2,6 +2,14 @@
 
 All notable changes to `statamic-focal-point-fieldtype` will be documented in this file
 
+## v2.1.0 - 2023-05-13
+
+### What's Changed
+
+- Support within nested fieldtypes (e.g. replicator, grid)
+
+**Full Changelog**: https://github.com/ncla/statamic-focal-point-fieldtype/compare/v2.0.0...v2.1.0
+
 ## v2.0.0 - 2023-05-13
 
 ### What's Changed
