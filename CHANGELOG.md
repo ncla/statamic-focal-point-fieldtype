@@ -2,6 +2,18 @@
 
 All notable changes to `statamic-focal-point-fieldtype` will be documented in this file
 
+## v4.0.0 - 2024-05-16
+
+### What's Changed
+
+* Statamic 5 support by @mikemartin in https://github.com/ncla/statamic-focal-point-fieldtype/pull/4
+
+### New Contributors
+
+* @mikemartin made their first contribution in https://github.com/ncla/statamic-focal-point-fieldtype/pull/4
+
+**Full Changelog**: https://github.com/ncla/statamic-focal-point-fieldtype/compare/v3.0.0...v4.0.0
+
 ## v3.0.0 - 2023-05-13
 
 ### What's Changed
