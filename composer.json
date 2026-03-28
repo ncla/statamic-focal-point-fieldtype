@@ -23,6 +23,10 @@
             "providers": [
                 "Ncla\\FocalPoint\\ServiceProvider"
             ]
+        },
+        "download-dist": {
+            "url": "https://github.com/ncla/statamic-focal-point-fieldtype/releases/download/{$version}/dist.tar.gz",
+            "path": "resources/dist"
         }
     },
     "require": {

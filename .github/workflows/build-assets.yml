@@ -1,35 +1,39 @@
-name: Build assets for distribution
+name: Build and Release
 
 on:
   push:
-    branches:
-      - main
-    paths:
-      - 'resources/**'
-  workflow_dispatch:
+    tags:
+      - 'v*'
 
 permissions:
   contents: write
 
 jobs:
-  build-dist:
+  release:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Install front-end dependencies
-        run: npm i
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
 
       - name: Install PHP dependencies
-        run: composer install
+        run: composer install --no-dev
+
+      - name: Install front-end dependencies
+        run: npm ci
 
       - name: Compile assets
         run: npm run build
 
-      - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v4
+      - name: Create dist archive
+        run: tar -czvf dist.tar.gz -C resources dist
+
+      - name: Create release and upload dist
+        uses: softprops/action-gh-release@v2
         with:
-          commit_message: Build assets for distribution
-          file_pattern: 'dist/*'
+          files: dist.tar.gz
