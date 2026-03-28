@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'resources/**'
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -19,13 +20,13 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Install front-end dependencies
-        run: yarn
+        run: npm i
 
       - name: Install PHP dependencies
         run: composer install
 
       - name: Compile assets
-        run: yarn run production
+        run: npm run build
 
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4

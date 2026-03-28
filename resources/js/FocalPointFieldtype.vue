@@ -1,221 +1,237 @@
 <template>
-  <div
-    class="focal-point-fieldtype"
-    :class="{
-      'narrow-level-1': containerWidth < 220,
-      'narrow-level-2': containerWidth < 170
-    }"
-  >
-    <element-container @resized="containerWidth = $event.width;">
-      <div>
-        <button
-          class="btn w-full flex flex-row items-center justify-center text-center gap-1"
-          type="button"
-          :disabled="isEditingDisabled"
-          @click="openFocalPointEditor"
-        >
-          <svg-icon name="pin" class="pin-icon flex-shrink-0 w-4 h-4"/>
-          <span
-            class="error overflow-hidden truncate"
-            :title="error"
-            v-if="error"
-            v-text="error"
-          ></span>
-          <span
-            class="call-to-action"
-            v-else-if="!coordinates"
-          >{{ __('Set Focal Point') }}</span>
-          <span class="coordinates flex-row gap-1" v-else>
-            <span>{{ __('X') }}: {{ coordinates.x }}%</span>
-            <span>{{ __('Y') }}: {{ coordinates.y }}%</span>
-            <span>{{ __('Z') }}: {{ coordinates.z }}</span>
-          </span>
-          <span
-            class="coordinates-simple"
-            v-if="coordinates"
-            v-text="coordinatesString"
-          ></span>
-        </button>
-      </div>
-    </element-container>
+    <div>
+        <div v-if="error" class="help-block text-red-500">
+            <p>{{ error }}</p>
+        </div>
 
-    <FocalPointEditor
-      v-if="showFocalPointEditor"
-      :data="coordinatesString"
-      :image="assetImageUrl"
-      @selected="selectFocalPoint"
-      @closed="closeFocalPointEditor"
-    ></FocalPointEditor>
-  </div>
+        <template v-else>
+            <div
+                class="inline-block w-[130px] overflow-hidden rounded-xl border border-gray-300 dark:border-gray-700 dark:bg-gray-850"
+                :class="{ 'opacity-75': isDisabled }"
+            >
+                <!-- Image area -->
+                <div class="relative aspect-square bg-gray-100 dark:bg-gray-900">
+                    <div v-if="isDisabled" class="absolute inset-0 flex items-center justify-center p-2">
+                        <p class="text-center text-xs text-gray-500 dark:text-gray-400">
+                            {{ __('The :attribute field must contain an image.').replace(':attribute', targetAssetFieldHandle) }}
+                        </p>
+                    </div>
+                    <div v-else class="absolute inset-0" :style="previewStyle" />
+
+                    <!-- Hover overlay -->
+                    <div v-if="!isDisabled" class="absolute inset-0 flex items-center justify-center gap-2 opacity-0 duration-100 hover:opacity-100">
+                        <Button size="sm" icon="focus" icon-only @click="openFocalPointEditor" :aria-label="coordinates ? __('Edit Focal Point') : __('Set Focal Point')" />
+                        <Button v-if="coordinates" size="sm" icon="x" icon-only @click="reset" :aria-label="__('Reset')" />
+                    </div>
+                </div>
+
+                <!-- Coordinates footer -->
+                <div class="border-t border-gray-300 px-2 py-1 dark:border-gray-700">
+                    <div class="truncate text-center text-xs text-gray-600 dark:text-gray-400">
+                        <template v-if="effectiveCoordinates">
+                            {{ effectiveCoordinates.x }}% {{ effectiveCoordinates.y }}% {{ effectiveCoordinates.z }}&times;
+                        </template>
+                        <template v-else>
+                            50% 50% 1&times;
+                        </template>
+                    </div>
+                </div>
+            </div>
+
+            <FocalPointEditor
+                v-if="showFocalPointEditor && assetImageUrl"
+                :data="coordinatesString || defaultCoordinatesString"
+                :image="assetImageUrl"
+                @selected="selectFocalPoint"
+                @closed="closeFocalPointEditor"
+            />
+        </template>
+    </div>
 </template>
 
-<style type="text/css" scoped>
-.gap-1 {
-  gap: 0.25rem;
-}
+<script setup>
+import { computed, ref, watch } from 'vue';
+import { Fieldtype } from '@statamic/cms';
+import { Button, injectPublishContext } from '@statamic/cms/ui';
+import FocalPointEditor from '@statamic-src/components/assets/Editor/FocalPointEditor.vue';
 
-.coordinates-simple {
-  display: none;
-}
+const emit = defineEmits(Fieldtype.emits);
+const props = defineProps(Fieldtype.props);
+const { expose, update } = Fieldtype.use(emit, props);
+defineExpose(expose);
 
-.coordinates {
-  display: flex;
-}
+const THUMBNAIL_SIZE = 130;
 
-.focal-point-fieldtype.narrow-level-2 .coordinates {
-  display: none;
-}
+const showFocalPointEditor = ref(false);
+const error = ref(null);
+const imageDimensions = ref(null);
 
-.focal-point-fieldtype.narrow-level-2 .coordinates-simple {
-  display: inline;
-}
+const publishContext = injectPublishContext();
 
-.focal-point-fieldtype.narrow-level-1 svg {
-  display: none;
-}
-</style>
+const targetAssetFieldHandle = computed(() => props.config?.assets_field_handle);
 
-<script>
-// TODO: Check if there is better way to import from core
-import FocalPointEditor from "../../vendor/statamic/cms/resources/js/components/assets/Editor/FocalPointEditor";
+const assetFieldMeta = computed(() => {
+    if (!targetAssetFieldHandle.value || !publishContext) {
+        return null;
+    }
 
-export default {
-  components: {FocalPointEditor},
-  mixins: [Fieldtype],
-  inject: ['storeName'],
-  data() {
+    const meta = publishContext.meta?.value ?? publishContext.meta;
+    const key = [props.metaPathPrefix, targetAssetFieldHandle.value].filter(Boolean).join('.');
+
+    return data_get(meta, key, null);
+});
+
+const assetImageUrl = computed(() => {
+    try {
+        return assetFieldMeta.value.data[0].url;
+    } catch (e) {
+        return null;
+    }
+});
+
+const parseCoordinates = (value) => {
+    if (!value || typeof value !== 'string') {
+        return null;
+    }
+
+    const parts = value.split('-');
+
+    if (parts.length < 3) {
+        return null;
+    }
+
     return {
-      showFocalPointEditor: false,
-      error: null,
-      containerWidth: null
+        x: Number(parts[0]),
+        y: Number(parts[1]),
+        z: Number(parts[2]),
     };
-  },
-  computed: {
-    coordinates() {
-      if (!this.value) {
-        return null;
-      }
+};
 
-      if (this.value instanceof Array && this.value.length === 0) {
-        return null;
-      }
+const coordinates = computed(() => parseCoordinates(props.value));
 
-      const coordinatesString = this.value.split('-');
+const defaultCoordinates = computed(() => parseCoordinates(props.config?.default_value));
 
-      return {
-        x: coordinatesString[0],
-        y: coordinatesString[1],
-        z: coordinatesString[2],
-      }
-    },
-    coordinatesString() {
-      if (!this.coordinates) {
+const effectiveCoordinates = computed(() => coordinates.value ?? defaultCoordinates.value);
+
+const coordinatesString = computed(() => {
+    if (!coordinates.value) {
         return '';
-      }
-
-      return `${this.coordinates.x}-${this.coordinates.y}-${this.coordinates.z}`;
-    },
-    targetAssetFieldHandle() {
-      return this.config.assets_field_handle;
-    },
-    assetImageUrl() {
-      try {
-        return this.meta[this.targetAssetFieldHandle].data[0].url
-      } catch (e) {
-        return null;
-      }
-    },
-    isEditingDisabled() {
-      return this.error !== false
-    },
-    showFocalPointEditor() {
-      return this.showFocalPointEditor && this.error === false && this.assetImageUrl;
-    },
-    meta() {
-      if (!this.namePrefix) {
-        // Keep it simple for top level fields
-        return this.$store.state.publish[this.storeName].meta
-      }
-
-      let parent = this.$parent
-      let stopLoop = false
-      let loopIterations = 0
-      const loopIterationLimit = 1000
-      let meta
-
-      while (stopLoop === false && loopIterations < loopIterationLimit) {
-        // Keep looking till we find parent with meta and with matching target handle
-        if (parent && parent.meta && parent.meta[this.targetAssetFieldHandle]) {
-          meta = parent.meta
-          break
-        }
-
-        // No parent components available anymore
-        if (parent.$parent === undefined) {
-          break
-        }
-
-        parent = parent.$parent
-        loopIterations++
-      }
-
-      if (meta === undefined) {
-        return null
-      }
-
-      return meta
     }
-  },
-  watch: {
-    assetImageUrl() {
-      this.reset();
-      this.updateErrors();
+
+    return `${coordinates.value.x}-${coordinates.value.y}-${coordinates.value.z}`;
+});
+
+const defaultCoordinatesString = computed(() => {
+    if (!defaultCoordinates.value) {
+        return '';
     }
-  },
-  mounted() {
-    this.updateErrors();
-  },
-  methods: {
-    openFocalPointEditor() {
-      this.showFocalPointEditor = true;
-    },
-    closeFocalPointEditor() {
-      this.showFocalPointEditor = false;
-    },
-    selectFocalPoint(point) {
-      this.update(point)
-    },
-    reset() {
-      this.update(null);
-    },
-    updateErrors() {
-      this.error = this.findErrors();
-    },
-    findErrors() {
-      if (!this.config.assets_field_handle) {
+
+    return `${defaultCoordinates.value.x}-${defaultCoordinates.value.y}-${defaultCoordinates.value.z}`;
+});
+
+const isDisabled = computed(() => {
+    if (error.value) return true;
+
+    const data = assetFieldMeta.value?.data ?? [];
+
+    return data.length === 0 || data.length > 1;
+});
+
+// Replicates Glide's runCropResize algorithm exactly.
+// resolveCropResizeDimensions → scale by zoom → resolveCropOffset → crop.
+const previewStyle = computed(() => {
+    if (!assetImageUrl.value) {
+        return {};
+    }
+
+    const base = {
+        backgroundImage: `url('${assetImageUrl.value}')`,
+        backgroundRepeat: 'no-repeat',
+    };
+
+    if (!effectiveCoordinates.value || !imageDimensions.value) {
+        return { ...base, backgroundSize: 'cover', backgroundPosition: '50% 50%' };
+    }
+
+    const { x, y, z } = effectiveCoordinates.value;
+    const { w: Sw, h: Sh } = imageDimensions.value;
+    const W = THUMBNAIL_SIZE;
+    const H = THUMBNAIL_SIZE;
+
+    // Step 1: resolveCropResizeDimensions — cover resize (no zoom yet)
+    let Rw, Rh;
+    if (H > W * (Sh / Sw)) {
+        Rw = H * (Sw / Sh);
+        Rh = H;
+    } else {
+        Rw = W;
+        Rh = W * (Sh / Sw);
+    }
+
+    // Step 2: apply zoom
+    const bgW = Math.round(Rw * z);
+    const bgH = Math.round(Rh * z);
+
+    // Step 3: resolveCropOffset — center crop on focal point, clamped
+    const offsetX = Math.max(0, Math.min((bgW * x / 100) - (W / 2), bgW - W));
+    const offsetY = Math.max(0, Math.min((bgH * y / 100) - (H / 2), bgH - H));
+
+    return {
+        ...base,
+        backgroundSize: `${bgW}px ${bgH}px`,
+        backgroundPosition: `${-offsetX}px ${-offsetY}px`,
+    };
+});
+
+const findErrors = () => {
+    if (!props.config?.assets_field_handle) {
         return __('No asset field handle has been set in the field options');
-      }
+    }
 
-      if (this.meta === null || !this.meta.hasOwnProperty(this.targetAssetFieldHandle)) {
+    if (assetFieldMeta.value === null) {
         return __('Linked asset field was not found');
-      }
+    }
 
-      const fieldMeta = this.meta[this.targetAssetFieldHandle];
+    return false;
+};
 
-      if (!fieldMeta.hasOwnProperty('data')) {
-        return __('No asset field meta data is available');
-      }
+const updateErrors = () => {
+    error.value = findErrors();
+};
 
-      if (fieldMeta.data.length > 1) {
-        return __('Focal focus fieldtype only supports a single asset');
-      }
+watch(
+    assetImageUrl,
+    (newUrl, oldUrl) => {
+        if (oldUrl !== undefined && newUrl !== oldUrl) {
+            reset();
+            imageDimensions.value = null;
+        }
 
-      if (fieldMeta.data.length !== 1) {
-        return __('No asset has been set');
-      }
+        updateErrors();
 
-      return false;
+        if (newUrl) {
+            const img = new Image();
+            img.onload = () => { imageDimensions.value = { w: img.naturalWidth, h: img.naturalHeight }; };
+            img.src = newUrl;
+        }
     },
-  },
+    { immediate: true },
+);
+
+const openFocalPointEditor = () => {
+    showFocalPointEditor.value = true;
+};
+
+const closeFocalPointEditor = () => {
+    showFocalPointEditor.value = false;
+};
+
+const selectFocalPoint = (point) => {
+    update(point);
+    closeFocalPointEditor();
+};
+
+const reset = () => {
+    update(null);
 };
 </script>

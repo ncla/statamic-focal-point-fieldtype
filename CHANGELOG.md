@@ -2,6 +2,15 @@
 
 All notable changes to `statamic-focal-point-fieldtype` will be documented in this file
 
+## v5.0.0 - 2026-03-10
+
+### What's Changed
+
+* Statamic 6 support by @mikemartin
+* Added thumbnail preview
+* Added default value config field
+* Disabled state when no asset is selected
+
 ## v4.0.0 - 2024-05-16
 
 ### What's Changed

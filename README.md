@@ -2,7 +2,7 @@
 
 <!-- statamic:hide -->
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/ncla/statamic-focal-point-fieldtype)](https://github.com/ncla/statamic-focal-point-fieldtype/releases)
-[![Supported Statamic version](https://img.shields.io/badge/Statamic-4.0%2B-FF269E)](https://github.com/statamic/cms/releases)
+[![Supported Statamic version](https://img.shields.io/badge/Statamic-6.0%2B-D2FF4C)](https://github.com/statamic/cms/releases)
 [![justforfunnoreally.dev badge](https://img.shields.io/badge/justforfunnoreally-dev-9ff)](https://justforfunnoreally.dev)
 <!-- /statamic:hide -->
 
@@ -14,9 +14,7 @@ This addon can be useful in situations such as:
 * Your site has the same asset appearing in multiple places and you do not want them all to share the same focal point
 * You want to add "pins" to an image e.g. a map with interest points
 
-<p align="center">
-    <img src="https://user-images.githubusercontent.com/5507083/216421793-3250d185-de63-49a2-a97f-27f875601a02.gif"/>
-</p>
+![statamic-focal-point-fieldtype](https://github.com/user-attachments/assets/e47226da-654e-4ef7-8df5-7179883b3798)
 
 ## Installation
 
@@ -31,18 +29,13 @@ composer require ncla/statamic-focal-point-fieldtype
 As any fieldtype, you can add it through control panel interface. You will find the fieldtype in the "Media" category. In field options, you will just have to define "Assets Field Handle" and that is it.
 
 Alternatively if you are feeling hacker vibes, you can of course add this fieldtype to your fields by editing blueprint file directly:
+
 ```yaml
 -
     handle: focal_point_field
     field:
         display: 'Focal Point'
-        type: focalpoint
-        icon: assets
-        listable: hidden
-        instructions_position: above
-        visibility: visible
-        always_save: false
-        # Here you specify the handle of the asset field that we will be getting image from for focal point setter
+        type: focal_point
         assets_field_handle: assets_field
 -
     handle: assets_field

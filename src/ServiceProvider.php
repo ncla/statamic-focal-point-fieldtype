@@ -7,17 +7,15 @@ use Statamic\Providers\AddonServiceProvider;
 
 class ServiceProvider extends AddonServiceProvider
 {
-    protected $translations = true;
-
     protected $fieldtypes = [
         FocalPointFieldtype::class,
     ];
 
-    protected $stylesheets = [
-        __DIR__.'/../dist/css/focalpoint.css',
-    ];
-
-    protected $scripts = [
-        __DIR__.'/../dist/js/focalpoint.js',
+    protected $vite = [
+        'input' => [
+            'resources/js/focalpoint.js',
+            'resources/css/focalpoint.css',
+        ],
+        'publicDirectory' => 'resources/dist',
     ];
 }
